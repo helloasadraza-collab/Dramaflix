@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlixStyle – Browse Movies</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #141414;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #fff;
+        }
+
+        /* Header / Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .logo {
+            color: #e50914;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: #e50914;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 80vh;
+            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%), 
+                        url('https://image.tmdb.org/t/p/original/wwemzKWzjKYJFfCeiB57q3r4Bcm.svg') center/cover no-repeat;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            padding-left: 60px;
+            margin-bottom: 30px;
+        }
+
+        .hero-content {
+            max-width: 500px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .btn {
+            background-color: #e50914;
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #f40612;
+        }
+
+        /* Movie Rows */
+        .row {
+            margin: 40px 0 20px 60px;
+        }
+
+        .row h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .movie-slider {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 10px;
+            padding-bottom: 10px;
+        }
+
+        .movie-slider::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .movie-slider::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        .movie-slider::-webkit-scrollbar-thumb {
+            background: #e50914;
+            border-radius: 4px;
+        }
+
+        .movie-card {
+            flex: 0 0 auto;
+            width: 200px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-card img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .movie-card h3 {
+            font-size: 0.9rem;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+            font-size: 0.8rem;
+            border-top: 1px solid #222;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            .hero {
+                padding-left: 20px;
+            }
+            .row {
+                margin-left: 20px;
+            }
+            .movie-card {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">FLIXSTYLE</div>
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">TV Shows</a>
+        <a href="#">Movies</a>
+        <a href="#">Latest</a>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>Unlimited Movies, TV Shows & More.</h1>
+        <p>Watch anywhere. Cancel anytime.</p>
+        <button class="btn" onclick="alert('Demo: Start watching!')">Watch Now</button>
+    </div>
+</div>
+
+<div class="row">
+    <h2>🔥 Trending Now</h2>
+    <div class="movie-slider" id="trending"></div>
+</div>
+
+<div class="row">
+    <h2>⭐ Top Rated</h2>
+    <div class="movie-slider" id="topRated"></div>
+</div>
+
+<div class="row">
+    <h2>🎬 Action & Adventure</h2>
+    <div class="movie-slider" id="action"></div>
+</div>
+
+<footer>
+    &copy; 2026 FlixStyle. This is a demo project – no real streaming.
+</footer>
+
+<script>
+    // Sample movie data (title + poster)
+    // Using placeholder images from The Movie Database (TMDB) – all safe and publicly accessible.
+    const movies = {
+        trending: [
+            { title: "Dune: Part Two", poster: "https://image.tmdb.org/t/p/w500/8b8d8wjH1gM1pV4M7X5qQ6Y0cX8.jpg" },
+            { title: "The Batman", poster: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg" },
+            { title: "Oppenheimer", poster: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" },
+            { title: "Spider-Man: Across the Spider-Verse", poster: "https://image.tmdb.org/t/p/w500/8Vt6mWEReuy4OfFioTbBQwZ4GzL.jpg" },
+            { title: "John Wick: Chapter 4", poster: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg" }
+        ],
+        topRated: [
+            { title: "The Shawshank Redemption", poster: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg" },
+            { title: "The Godfather", poster: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg" },
+            { title: "The Dark Knight", poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg" },
+            { title: "Pulp Fiction", poster: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg" },
+            { title: "Fight Club", poster: "https://image.tmdb.org/t/p/w500/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg" }
+        ],
+        action: [
+            { title: "Mad Max: Fury Road", poster: "https://image.tmdb.org/t/p/w500/8tZYtuWezp8JbcsvHYO0O46tFbo.jpg" },
+            { title: "Gladiator", poster: "https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg" },
+            { title: "Die Hard", poster: "https://image.tmdb.org/t/p/w500/yFihWxQcmqcaBR31QM6Y8gT6aYV.jpg" },
+            { title: "The Matrix", poster: "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg" },
+            { title: "Top Gun: Maverick", poster: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg" }
+        ]
+    };
+
+    function createMovieCard(movie) {
+        const card = document.createElement('div');
+        card.className = 'movie-card';
+        // fallback image if poster fails to load
+        const imgSrc = movie.poster;
+        card.innerHTML = `
+            <img src="${imgSrc}" alt="${movie.title}" onerror="this.src='https://via.placeholder.com/200x300?text=No+Image'">
+            <h3>${movie.title}</h3>
+        `;
+        card.addEventListener('click', () => {
+            alert(`You clicked on "${movie.title}". (Demo action)`);
+        });
+        return card;
+    }
+
+    function populateRow(rowId, movieList) {
+        const container = document.getElementById(rowId);
+        if (!container) return;
+        movieList.forEach(movie => {
+            container.appendChild(createMovieCard(movie));
+        });
+    }
+
+    populateRow('trending', movies.trending);
+    populateRow('topRated', movies.topRated);
+    populateRow('action', movies.action);
+</script>
+</body>
+</html>
